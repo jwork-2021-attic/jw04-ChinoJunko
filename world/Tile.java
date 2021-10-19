@@ -28,7 +28,7 @@ public enum Tile {
 
     FLOOR((char) 250, AsciiPanel.green),
 
-    WALL((char) 177, AsciiPanel.brightBlack),
+    WALL((char) 219, AsciiPanel.brightBlack),//177
 
     BOUNDS('x', AsciiPanel.magenta);
 

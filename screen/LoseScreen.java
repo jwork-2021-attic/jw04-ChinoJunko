@@ -27,7 +27,17 @@ public class LoseScreen extends RestartScreen {
 
     @Override
     public void displayOutput(AsciiPanel terminal) {
-        terminal.write("You lost! Press enter to try again.", 0, 0);
+        int left = 4;
+        int top = 9;
+        terminal.write(" ______       ______       ________       ______      ",left,top+0);
+        terminal.write("/_____/\\     /_____/\\     /_______/\\     /_____/\\     ",left,top+1);
+        terminal.write("\\:::_ \\ \\    \\::::_\\/_    \\::: _  \\ \\    \\:::_ \\ \\    ",left,top+2);
+        terminal.write(" \\:\\ \\ \\ \\    \\:\\/___/\\    \\::(_)  \\ \\    \\:\\ \\ \\ \\   ",left,top+3);
+        terminal.write("  \\:\\ \\ \\ \\    \\::___\\/_    \\:: __  \\ \\    \\:\\ \\ \\ \\  ",left,top+4);
+        terminal.write("   \\:\\/.:| |    \\:\\____/\\    \\:.\\ \\  \\ \\    \\:\\/.:| | ",left,top+5);
+        terminal.write("    \\____/_/     \\_____\\/     \\__\\/\\__\\/     \\____/_/ ",left,top+6);
+        terminal.write("             Press ENTER to try again                ", left, top+11);
+
     }
 
 }

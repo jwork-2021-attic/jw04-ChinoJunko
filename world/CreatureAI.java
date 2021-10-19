@@ -52,6 +52,7 @@ class CreatureAI {
             }
             return false;
         }
+        creature.visitTile(x, y);
         return true;
     }
 }

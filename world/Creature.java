@@ -111,6 +111,8 @@ public class Creature {
         return world.tile(wx, wy);
     }
 
+    public void visitTile(int wx, int wy){ world.setVisit(wx, wy); }
+
     public void dig(int wx, int wy) {
         world.dig(wx, wy);
     }

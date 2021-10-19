@@ -27,7 +27,15 @@ public class WinScreen extends RestartScreen {
 
     @Override
     public void displayOutput(AsciiPanel terminal) {
-        terminal.write("You won! Press enter to go again.", 0, 0);
+        int left = 4;
+        int top = 9;
+        terminal.write("                     __    __   _____      __     _ ",left,top+0);
+        terminal.write("/\\_/\\  ___   _   _  / / /\\ \\ \\  \\_   \\  /\\ \\ \\   / \\",left,top+1);
+        terminal.write("\\_ _/ / _ \\ | | | | \\ \\/  \\/ /   / /\\/ /  \\/ /  /  /",left,top+2);
+        terminal.write(" / \\ | (_) || |_| |  \\  /\\  / /\\/ /_  / /\\  /  /\\_/ ",left,top+3);
+        terminal.write(" \\_/  \\___/  \\__,_|   \\/  \\/  \\____/  \\_\\ \\/   \\/   ",left,top+4);
+        terminal.write("               Press ENTER to Play again                ", left, top+11);
+
     }
 
 }

@@ -28,17 +28,30 @@ import java.util.List;
 public class World {
 
     private Tile[][] tiles;
+    private boolean[][] visit;
+    private int[][] path;
     private int width;
     private int height;
     private List<Creature> creatures;
 
     public static final int TILE_TYPES = 2;
 
-    public World(Tile[][] tiles) {
+    public World(Tile[][] tiles, int[][] path) {
         this.tiles = tiles;
+        this.path = path;
         this.width = tiles.length;
         this.height = tiles[0].length;
         this.creatures = new ArrayList<>();
+        this.visit = new boolean[tiles.length][tiles[0].length];
+        for (int i = 0; i < visit.length; i++) {
+            for (int j = 0; j < visit[0].length; j++) {
+                visit[i][j] = false;
+            }
+        }
+    }
+
+    public int path(int x, int y){
+        return path[x][y];
     }
 
     public Tile tile(int x, int y) {
@@ -47,6 +60,14 @@ public class World {
         } else {
             return tiles[x][y];
         }
+    }
+
+    public void setVisit(int x, int y){
+        visit[x][y] = true;
+    }
+
+    public boolean getVisit(int x, int y){
+        return visit[x][y];
     }
 
     public char glyph(int x, int y) {
@@ -65,8 +86,12 @@ public class World {
         return height;
     }
 
+    public boolean validtile(int x, int y){
+        return x>=0 && x<width && y>=0 && y< height;
+    }
+
     public void dig(int x, int y) {
-        if (tile(x, y).isDiggable()) {
+        if (validtile(x, y) && tile(x, y).isDiggable()) {
             tiles[x][y] = Tile.FLOOR;
         }
     }
@@ -80,6 +105,13 @@ public class World {
             y = (int) (Math.random() * this.height);
         } while (!tile(x, y).isGround() || this.creature(x, y) != null);
 
+        creature.setX(x);
+        creature.setY(y);
+
+        this.creatures.add(creature);
+    }
+
+    public void addAtLocation(Creature creature, int x, int y) {
         creature.setX(x);
         creature.setY(y);
 

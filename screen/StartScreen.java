@@ -27,8 +27,17 @@ public class StartScreen extends RestartScreen {
 
     @Override
     public void displayOutput(AsciiPanel terminal) {
-        terminal.write("This is the start screen.", 0, 0);
-        terminal.write("Press ENTER to continue...", 0, 1);
+        int left = 2;
+        int top = 7;
+        terminal.write("ooo        ooooo       .o.        oooooooooooo oooooooooooo ",left,top+0);
+        terminal.write("`88.       .888'      .888.      d'\"\"\"\"\"\"d888' `888'     `8 ",left,top+1);
+        terminal.write(" 888b     d'888      .8\"888.           .888P    888        ",left,top+2);
+        terminal.write(" 8 Y88. .P  888     .8' `888.         d888'     888oooo8    ",left,top+3);
+        terminal.write(" 8  `888'   888    .88ooo8888.      .888P       888    \"    ",left,top+4);
+        terminal.write(" 8    Y     888   .8'     `888.    d888'    .P  888       o ",left,top+5);
+        terminal.write("o8o        o888o o88o     o8888o .8888888888P  o888ooooood8 ",left,top+6);
+        terminal.write("                    Press ENTER to Start                    ", left, top+11);
+
     }
 
 }
