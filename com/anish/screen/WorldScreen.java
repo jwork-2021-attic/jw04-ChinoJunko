@@ -2,9 +2,10 @@ package com.anish.screen;
 
 import java.awt.Color;
 import java.awt.event.KeyEvent;
+import java.util.Random;
 
-import com.anish.calabashbros.BubbleSorter;
-import com.anish.calabashbros.Calabash;
+import com.anish.calabashbros.ShellSorter;
+import com.anish.calabashbros.Goblin;
 import com.anish.calabashbros.World;
 
 import asciiPanel.AsciiPanel;
@@ -12,32 +13,112 @@ import asciiPanel.AsciiPanel;
 public class WorldScreen implements Screen {
 
     private World world;
-    private Calabash[] bros;
+    private Goblin[][] goblins;
     String[] sortSteps;
+    public static final int GOBLIN_NUMBERS = 64;
+    public static final int COLUMN_SIZE = 8;
+    public static final int ROW_SIZE = GOBLIN_NUMBERS / COLUMN_SIZE;
+
+    class RandomArrayGenerator{
+        int[] array;
+        int arraySize;
+        int width,height;
+        RandomArrayGenerator(int size){
+            arraySize = size;
+            width=0;
+            height=0;
+            array = new int[arraySize];
+            for (int j = 0; j < arraySize; j++) {
+                array[j] = j+1;
+            }
+        }
+        RandomArrayGenerator(int width, int height){
+            this.width=width;
+            this.height=height;
+            arraySize = width*height;
+            array = new int[arraySize];
+            for (int j = 0; j < arraySize; j++) {
+                array[j] = j+1;
+            }
+            randomArray();
+        }
+        void swap(int i, int j){
+            int temp = array[i];
+            array[i] = array[j];
+            array[j] = temp;
+        }
+        void randomArray(){
+            Random random = new Random();
+            for (int i = array.length; i > 1; i--) {
+                swap(i - 1, random.nextInt(i));
+            }
+        }
+        int[] getArray(){
+            return array;
+        }
+        int[][] getMatrix()throws Exception{
+            if(height==0||width==0){
+                throw new Exception("Not define a matrix");
+            }
+            int[][] matrix = new int[width][height];
+            for (int j = 0; j < width; j++) {
+                for (int k = 0; k < height; k++) {
+                    matrix[j][k] = array[j*height+k];
+                }
+            }
+            return matrix;
+        }
+    }
+
+    public static Color getColor(int goblin_rank){
+        int r,g,b;
+        int column=(goblin_rank-1)%COLUMN_SIZE;
+        if(column*3<COLUMN_SIZE){
+            r=255;
+            g=(255*3*column)/COLUMN_SIZE;
+            b=0;
+        }else if(column*2<COLUMN_SIZE){
+            r=750-(column*250*6)/COLUMN_SIZE;
+            g=255;
+            b=0;
+        }else if(column*3<COLUMN_SIZE*2){
+            r=0;
+            g=255;
+            b=(column*250*6)/COLUMN_SIZE-750;
+        }else if(column*6<COLUMN_SIZE*5){
+            r=0;
+            g=1250-(column*250*6)/COLUMN_SIZE;
+            b=255;
+        }else{
+            r=(150*column*6)/COLUMN_SIZE-750;
+            g=0;
+            b=255;
+        }
+        return new Color(r,g,b);
+    }
 
     public WorldScreen() {
         world = new World();
 
-        bros = new Calabash[7];
+        RandomArrayGenerator randomArrayGenerator = new RandomArrayGenerator(ROW_SIZE,COLUMN_SIZE);
+        int[][] rank = new int[ROW_SIZE][COLUMN_SIZE];
+        try{
+            rank = randomArrayGenerator.getMatrix();
+        }catch (Exception e){
+            System.out.println("Not define as a matrix!");
+        }
 
-        bros[3] = new Calabash(new Color(204, 0, 0), 1, world);
-        bros[5] = new Calabash(new Color(255, 165, 0), 2, world);
-        bros[1] = new Calabash(new Color(252, 233, 79), 3, world);
-        bros[0] = new Calabash(new Color(78, 154, 6), 4, world);
-        bros[4] = new Calabash(new Color(50, 175, 255), 5, world);
-        bros[6] = new Calabash(new Color(114, 159, 207), 6, world);
-        bros[2] = new Calabash(new Color(173, 127, 168), 7, world);
+        goblins = new Goblin[ROW_SIZE][COLUMN_SIZE];
 
-        world.put(bros[0], 10, 10);
-        world.put(bros[1], 12, 10);
-        world.put(bros[2], 14, 10);
-        world.put(bros[3], 16, 10);
-        world.put(bros[4], 18, 10);
-        world.put(bros[5], 20, 10);
-        world.put(bros[6], 22, 10);
+        for (int i = 0; i < ROW_SIZE; i++) {
+            for (int j = 0; j < COLUMN_SIZE; j++) {
+                goblins[i][j] = new Goblin(getColor(rank[i][j]),rank[i][j],world);
+                world.put(goblins[i][j],World.HEIGHT/2-ROW_SIZE+2*i,World.WIDTH/2-COLUMN_SIZE+2*j);
+            }
+        }
 
-        BubbleSorter<Calabash> b = new BubbleSorter<>();
-        b.load(bros);
+        ShellSorter<Goblin> b = new ShellSorter<>();
+        b.load(goblins);
         b.sort();
 
         sortSteps = this.parsePlan(b.getPlan());
@@ -47,15 +128,17 @@ public class WorldScreen implements Screen {
         return plan.split("\n");
     }
 
-    private void execute(Calabash[] bros, String step) {
+    private void execute(Goblin[][] gobs, String step) {
         String[] couple = step.split("<->");
-        getBroByRank(bros, Integer.parseInt(couple[0])).swap(getBroByRank(bros, Integer.parseInt(couple[1])));
+        getGobByRank(gobs, Integer.parseInt(couple[0])).swap(getGobByRank(gobs, Integer.parseInt(couple[1])));
     }
 
-    private Calabash getBroByRank(Calabash[] bros, int rank) {
-        for (Calabash bro : bros) {
-            if (bro.getRank() == rank) {
-                return bro;
+    private Goblin getGobByRank(Goblin[][] gobs, int rank) {
+        for (Goblin[] array : gobs) {
+            for (Goblin gob : array){
+                if (gob.getRank() == rank) {
+                    return gob;
+                }
             }
         }
         return null;
@@ -64,10 +147,10 @@ public class WorldScreen implements Screen {
     @Override
     public void displayOutput(AsciiPanel terminal) {
 
-        for (int x = 0; x < World.WIDTH; x++) {
-            for (int y = 0; y < World.HEIGHT; y++) {
+        for (int x = 0; x < World.HEIGHT; x++) {
+            for (int y = 0; y < World.WIDTH; y++) {
 
-                terminal.write(world.get(x, y).getGlyph(), x, y, world.get(x, y).getColor());
+                terminal.write(world.get(x, y).getGlyph(), y, x, world.get(x, y).getColor());
 
             }
         }
@@ -79,7 +162,7 @@ public class WorldScreen implements Screen {
     public Screen respondToUserInput(KeyEvent key) {
 
         if (i < this.sortSteps.length) {
-            this.execute(bros, sortSteps[i]);
+            this.execute(goblins, sortSteps[i]);
             i++;
         }
 
